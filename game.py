@@ -24,7 +24,11 @@ def list_of_items(items):
     'money, a student handbook, laptop'
 
     """
-    pass
+    names = []
+    for dicts in items:
+        names.append(dicts["name"])
+    item_list = ', '.join(map(str, names))
+    return item_list
 
 
 def print_room_items(room):
