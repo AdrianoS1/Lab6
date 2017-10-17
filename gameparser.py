@@ -32,7 +32,7 @@ def filter_words(words, skip_words):
         if x not in skip_words:
             new_words.append(x)
     words = new_words
-    print(words)
+    return words
 
 
 
@@ -86,6 +86,8 @@ def normalise_input(user_input):
     no_punct = remove_punct(user_input).lower()
     words = no_punct.split()
     filter_words(words, skip_words)
+    return words
+
 
     #
     # COMPLETE ME!
