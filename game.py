@@ -241,7 +241,8 @@ def execute_go(direction):
     """
     if is_valid_exit(current_room["exits"], direction) == True:
         print("Moving to " + exit_leads_to(current_room["exits"], direction))
-        current_room = rooms[exits[direction]]
+        current_room = move(current_room["exits"], direction)
+        print(current_room)
     else:
         print("You cannot go there.")
 
@@ -252,12 +253,15 @@ def execute_take(item_id):
     there is no such item in the room, this function prints
     "You cannot take that."
     """
-    
-    if item_id == current_room["items"]:
-        inventory.append(item_id)
-        current_room["items"].remove(item_id)
-    else:
-        print("You cannot take that.")
+    tracker = len(inventory)
+    for somelist in current_room["items"]:
+        if item_id == somelist["id"]:
+            inventory.append(somelist)
+            current_room["items"].remove(somelist)
+            print("You grab the item")
+    if len(inventory) == tracker:
+        print("You cannot take that")
+
 
 
 def execute_drop(item_id):
@@ -265,12 +269,14 @@ def execute_drop(item_id):
     player's inventory to list of items in the current room. However, if there is
     no such item in the inventory, this function prints "You cannot drop that."
     """
-    for ids in inventory:
-        if item_id == ids["id"]:
-            inventory.remove(item_id)
-            current_room["items"].append(item_id)
-        else:
-            print("You cannot drop that.")
+    tracker = len(inventory)
+    for somelist in inventory:
+        if item_id == somelist["id"]:
+            inventory.remove(somelist)
+            current_room["items"].append(somelist)
+            print("You drop the item")
+    if len(inventory) == tracker:
+        print("You cannot drop the item")
 
 
 def execute_command(command):
@@ -359,7 +365,7 @@ def main():
         # Execute the player's command
         execute_command(command)
 
-        if len(inventory) == 4:
+        if len(inventory) == 6:
             print("You win")
             break
 
