@@ -239,10 +239,10 @@ def execute_go(direction):
     (and prints the name of the room into which the player is
     moving). Otherwise, it prints "You cannot go there."
     """
+    global current_room
     if is_valid_exit(current_room["exits"], direction) == True:
         print("Moving to " + exit_leads_to(current_room["exits"], direction))
         current_room = move(current_room["exits"], direction)
-        print(current_room)
     else:
         print("You cannot go there.")
 
@@ -253,15 +253,19 @@ def execute_take(item_id):
     there is no such item in the room, this function prints
     "You cannot take that."
     """
+    global held_mass
     tracker = len(inventory)
-    for somelist in current_room["items"]:
-        if item_id == somelist["id"]:
-            inventory.append(somelist)
-            current_room["items"].remove(somelist)
-            print("You grab the item")
+    if held_mass > 2:
+        print("You cannot hold anymore")
+    else:
+        for somelist in current_room["items"]:
+            if item_id == somelist["id"]:
+                inventory.append(somelist)
+                current_room["items"].remove(somelist)
+                held_mass = held_mass + somelist["mass"]
+                print("You grab the item")
     if len(inventory) == tracker:
         print("You cannot take that")
-
 
 
 def execute_drop(item_id):
@@ -269,11 +273,13 @@ def execute_drop(item_id):
     player's inventory to list of items in the current room. However, if there is
     no such item in the inventory, this function prints "You cannot drop that."
     """
+    global held_mass
     tracker = len(inventory)
     for somelist in inventory:
         if item_id == somelist["id"]:
             inventory.remove(somelist)
             current_room["items"].append(somelist)
+            held_mass = held_mass - somelist["mass"]
             print("You drop the item")
     if len(inventory) == tracker:
         print("You cannot drop the item")
@@ -358,6 +364,9 @@ def main():
         # Display game status (room description, inventory etc.)
         print_room(current_room)
         print_inventory_items(inventory)
+        print("Your objective is to bring all items to MJ and Simon's room")
+        print("")
+
 
         # Show the menu with possible actions and ask the player
         command = menu(current_room["exits"], current_room["items"], inventory)
@@ -365,8 +374,8 @@ def main():
         # Execute the player's command
         execute_command(command)
 
-        if len(inventory) == 6:
-            print("You win")
+        if len(rooms["Admins"]["items"]) == 6:
+            print("You won")
             break
 
 
